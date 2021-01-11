@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auto-test-server
+  namespace: default
+  labels:
+    app: auto-test-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auto-test-server
+  template:
+    metadata:
+      labels:
+        app: auto-test-server
+    spec:
+      containers:
+        - name: auto-server
+          image: registry.cn-hangzhou.aliyuncs.com/litiewang/litiewang:20210111155855
+          command: ["java","-jar","-Dagentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005","-Duser.timezone=Asia/Jerusalem","-Dspring.profiles.active=prod","app.jar"]
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          env:
+            - name: MYSQL_SERVICE_HOST
+              value: '192.168.1.122'
+            - name: MYSQL_SERVICE_PORT
+              value: '3306'
+            - name: USER_NAME
+              value: 'root'
+            - name: PASSWORD
+              value: 'zea0i+6hx7Dp'
+          livenessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /api/test/probe
+              port: 80
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: auto-test-server-service
+  namespace: default
+  labels:
+    app: auto-test-server
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      nodePort: 31000
+  selector:
+    app: auto-test-server

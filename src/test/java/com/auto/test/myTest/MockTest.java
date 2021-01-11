@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -35,9 +36,15 @@ public class MockTest {
   }
   @Test
   public void test2() {
-    // 创建Mock对象，参数可以是类或者接口
-    CronPattern cronPattern = new CronPattern("*/2 * * * * *");
-    CronPattern cronPattern2 = new CronPattern("* * * * * ? * f");
+    Date date1 = new Date();
+    try {
+      Thread.sleep(2000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    Date date2 = new Date();
+    System.out.println(date1+":"+date2);
+    System.out.println("相差"+(date2.getTime()-date1.getTime()));
     
   }
   

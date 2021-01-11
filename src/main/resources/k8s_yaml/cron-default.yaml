@@ -12,11 +12,9 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: cronjob
-              image: registry.cn-hangzhou.aliyuncs.com/litiewang/litiewang:20210106155544
-              command: ["java","-jar","-Dagentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005","-Dspring.profiles.active=prod","app.jar"]
+              image: registry.cn-hangzhou.aliyuncs.com/litiewang/litiewang:20210111154534
+              command: ["java","-jar","-Dagentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005","-Duser.timezone=Asia/Jerusalem","-Dspring.profiles.active=prod","app.jar"]
               args:
-                - "db16c7119f433e5511ae39b73861c0b8"
-                - "11819329357d9dbdcfd8630b4962e3a3"
               env:
                 - name: MYSQL_SERVICE_HOST
                   value: '192.168.1.122'
@@ -26,3 +24,10 @@ spec:
                   value: 'root'
                 - name: PASSWORD
                   value: 'zea0i+6hx7Dp'
+              livenessProbe:
+                httpGet:
+                  scheme: HTTP
+                  path: /api/test/probe
+                  port: 8800
+                initialDelaySeconds: 30
+                timeoutSeconds: 30

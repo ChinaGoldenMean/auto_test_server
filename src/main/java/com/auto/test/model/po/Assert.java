@@ -17,7 +17,7 @@ public class Assert implements Serializable {
   @ApiModelProperty(value = "提取表达式")
   private String extractExpress;
   @ApiModelProperty(value = "期望关系", required = true)
-  private String expectRelation;
+  private Integer expectRelation;
   @ApiModelProperty(value = "期望值", required = true)
   private String expectValue;
   @ApiModelProperty(value = "顺序")

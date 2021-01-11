@@ -73,12 +73,14 @@ public class ApiUtil {
       return false;
     }
     switch (assertion.getExpectRelation()) {
-      case "等于":
+     // case "等于":
+      case 0:
         if (assertion.getExpectValue().equals(realValue)) {
           return true;
         }
         break;
-      case "大于":
+     // case "大于":
+      case 1:
         if (realType.equals("number")) {
           Double aDouble = Double.valueOf(assertion.getExpectValue());
           Double aDouble1 = Double.valueOf(realValue);
@@ -87,7 +89,8 @@ public class ApiUtil {
           }
         }
         break;
-      case "大于等于":
+     // case "大于等于":
+      case 2:
         if (realType.equals("number")) {
           Double aDouble = Double.valueOf(assertion.getExpectValue());
           Double aDouble1 = Double.valueOf(realValue);
@@ -96,7 +99,8 @@ public class ApiUtil {
           }
         }
         break;
-      case "小于":
+    //  case "小于":
+      case 3:
         if (realType.equals("number")) {
           Double aDouble = Double.valueOf(assertion.getExpectValue());
           Double aDouble1 = Double.valueOf(realValue);
@@ -105,7 +109,8 @@ public class ApiUtil {
           }
         }
         break;
-      case "小于等于":
+      case 4:
+      //case "小于等于":
         if (realType.equals("number")) {
           Double aDouble = Double.valueOf(assertion.getExpectValue());
           Double aDouble1 = Double.valueOf(realValue);
@@ -114,47 +119,56 @@ public class ApiUtil {
           }
         }
         break;
-      case "包含":
+    //  case "包含":
+      case 5:
         if (realValue.contains(assertion.getExpectValue())) {
           return true;
         }
         break;
-      case "不包含":
+    //  case "不包含":
+      case 6:
         if (!realValue.contains(assertion.getExpectValue())) {
           return true;
         }
         break;
-      case "长度等于":
+    //  case "长度等于":
+      case 7:
         if (assertion.getExpectValue().length() == realValue.length()) {
           return true;
         }
         break;
-      case "长度大于":
+    //  case "长度大于":
+      case 8:
         if (realValue.length() > assertion.getExpectValue().length()) {
           return true;
         }
         break;
-      case "长度大于等于":
+  //    case "长度大于等于":
+      case 9:
         if (realValue.length() >= assertion.getExpectValue().length()) {
           return true;
         }
         break;
-      case "长度小于":
+     // case "长度小于":
+      case 10:
         if (realValue.length() < assertion.getExpectValue().length()) {
           return true;
         }
         break;
-      case "长度小等于":
+  //    case "长度小等于":
+      case 11:
         if (realValue.length() <= assertion.getExpectValue().length()) {
           return true;
         }
         break;
-      case "开始于":
+    //  case "开始于":
+      case 12:
         if (realValue.startsWith(assertion.getExpectValue())) {
           return true;
         }
         break;
-      case "结束于":
+    //  case "结束于":
+      case 13:
         if (realValue.endsWith(assertion.getExpectValue())) {
           return true;
         }

@@ -28,7 +28,7 @@ public class TAutoTestPlanApiResult implements Serializable {
     */
     private String jobId;
     /**
-    * 状态 0未执行 1执行中 2执行完成 3任务超时中断 4连接客户端失败, 5执行失败
+    * 状态 0未执行 1执行中 2执行完成 3任务超时中断 5执行失败
     */
     private Integer status;
     /**
@@ -46,7 +46,7 @@ public class TAutoTestPlanApiResult implements Serializable {
     /**
     * 结束时间
     */
-    private Date endTime;
+    private Long endTime;
     /**
     * 备注
     */

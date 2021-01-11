@@ -39,7 +39,7 @@ public class AutoTestServerApplication {
   public MybatisPlusInterceptor paginationInterceptor() {
     MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
     //乐观锁
-    mybatisPlusInterceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
+    //mybatisPlusInterceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
     //分页配置
     mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
     return mybatisPlusInterceptor;

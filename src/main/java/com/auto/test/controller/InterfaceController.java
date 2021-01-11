@@ -46,16 +46,13 @@ public class InterfaceController {
   
   @PostMapping("debug")
   @ApiOperation(value = "调试api")
-  public ResponseInfo debugTApi(@RequestBody TAutoInterface api) {
+  public JsonResult<TApiResult> debugTApi(@RequestBody TAutoInterface api) {
     Map<String, Object> caseVars = new ConcurrentHashMap<>();
     List<ApiParam> params = new ArrayList<>();
-    try {
-      TApiResult TApiResult = requestExecutorServer.executeHttpRequest(api, null, caseVars, params);
-      return new ResponseInfo(true, TApiResult);
-    } catch (Exception e) {
-      log.error("debug出错：", e);
-      return new ResponseInfo(false, new ErrorInfo(12, e.getMessage()));
-    }
+   
+      TApiResult tApiResult = requestExecutorServer.executeHttpRequest(api, null, caseVars, params);
+      return JsonResult.success(tApiResult);
+    
   }
   
   @PutMapping("update")
