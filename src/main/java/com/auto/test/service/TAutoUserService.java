@@ -5,7 +5,7 @@ import com.auto.test.entity.TAutoUser;
 /**
  * (TAutoUser)表服务接口
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-18 15:14:30
  */
 public interface TAutoUserService {

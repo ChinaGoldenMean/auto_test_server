@@ -23,12 +23,16 @@ import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.BatchV1Api;
 import io.kubernetes.client.openapi.apis.BatchV1beta1Api;
 import io.kubernetes.client.openapi.models.*;
+import io.kubernetes.client.util.conversion.Jobs;
+import okhttp3.Call;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @org.springframework.stereotype.Service
 public class CronJobServiceImpl extends K8sSearch implements CronJobService {
@@ -45,6 +49,7 @@ public class CronJobServiceImpl extends K8sSearch implements CronJobService {
   
   @Autowired
   TAutoYamlService yamlService;
+  
   @Override
   public Page<List<CronJob>> listCronJob(SearchParamDTO paramVo) {
     BatchV1beta1Api batchV1beta1Api = k8sApiService.getBatchV1beta1Api();
@@ -73,7 +78,7 @@ public class CronJobServiceImpl extends K8sSearch implements CronJobService {
         cronJobs.add(cronJob);
       });
     }
-    Page<List<CronJob>> page = new Page(paramVo, cronJobs, getTotalItem(),new Long(cronJobs.size()) );
+    Page<List<CronJob>> page = new Page(paramVo, cronJobs, getTotalItem(), new Long(cronJobs.size()));
     return page;
   }
   
@@ -92,12 +97,12 @@ public class CronJobServiceImpl extends K8sSearch implements CronJobService {
   public V1beta1CronJob readCronJob(String nameSpace, String name) {
     
     BatchV1beta1Api batchV1beta1Api = k8sApiService.getBatchV1beta1Api();
-    V1beta1CronJob v1beta1CronJob=null;
+    V1beta1CronJob v1beta1CronJob = null;
     
     try {
       v1beta1CronJob = batchV1beta1Api.readNamespacedCronJob(name, nameSpace, ReadParam.pretty, ReadParam.exact, ReadParam.export);
     } catch (ApiException e) {
-      if(e.getCode()!=404){
+      if (e.getCode() != 404) {
         throw new ServiceException(ResultCode.QUERY_CRON_JOB_FAIL);
       }
     }
@@ -107,18 +112,18 @@ public class CronJobServiceImpl extends K8sSearch implements CronJobService {
   
   @Override
   public Boolean createJob(String name, String selfLink) {
-    if(StringUtils.isEmpty(selfLink)){
+    if (StringUtils.isEmpty(selfLink)) {
       throw new ServiceException(ResultCode.VALIDATE_FAILED);
     }
     String[] urls = selfLink.split("/");
-    String nameSpace = urls[urls.length-3];
-    String cronJobName = urls[urls.length-1];
-   
+    String nameSpace = urls[urls.length - 3];
+    String cronJobName = urls[urls.length - 1];
+    
     V1beta1CronJob v1beta1CronJob;
     BatchV1beta1Api batchV1beta1Api = k8sApiService.getBatchV1beta1Api();
     try {
       v1beta1CronJob = batchV1beta1Api.readNamespacedCronJob(cronJobName, nameSpace, ReadParam.pretty, ReadParam.exact, ReadParam.export);
-  
+      
       V1Job v1Job = new V1Job();
       V1ObjectMeta metadata = new V1ObjectMeta();
       metadata.setNamespace(nameSpace);
@@ -129,7 +134,7 @@ public class CronJobServiceImpl extends K8sSearch implements CronJobService {
       v1Job.setMetadata(metadata);
       v1Job.setSpec(v1JobSpec);
       BatchV1Api batchV1Api = k8sApiService.getBatchV1Api();
-      V1Job job = batchV1Api.createNamespacedJob(nameSpace,v1Job, CreateParam.pretty, CreateParam.dryRun, CreateParam.fieldManager);
+      V1Job job = batchV1Api.createNamespacedJob(nameSpace, v1Job, CreateParam.pretty, CreateParam.dryRun, CreateParam.fieldManager);
       if (job != null) {
         return true;
       }
@@ -144,13 +149,13 @@ public class CronJobServiceImpl extends K8sSearch implements CronJobService {
   public Boolean createCronJob(TAutoJob job) {
     QueryWrapper<TAutoYaml> queryWrapper = new QueryWrapper();
     queryWrapper.eq("type", K8sKind.CRON_JOB.value);
-    TAutoYaml yaml =  yamlService.getOne(queryWrapper);
+    TAutoYaml yaml = yamlService.getOne(queryWrapper);
     V1beta1CronJob newV1Job = K8sUtils.toObject(yaml.getYaml(), V1beta1CronJob.class);
     newV1Job.getMetadata().setNamespace(job.getModuleId());
-    newV1Job.getMetadata().setName( job.getId());
+    newV1Job.getMetadata().setName(job.getId());
     
     newV1Job.getSpec().setSchedule(job.getCronExpression());
-    V1Container   v1Container=   newV1Job.getSpec().getJobTemplate().getSpec().getTemplate().getSpec().getContainers().get(0);
+    V1Container v1Container = newV1Job.getSpec().getJobTemplate().getSpec().getTemplate().getSpec().getContainers().get(0);
     List<String> args = new ArrayList<>();
     args.add(job.getId());
     v1Container.setArgs(args);
@@ -166,5 +171,43 @@ public class CronJobServiceImpl extends K8sSearch implements CronJobService {
       return true;
     }
     return false;
+  }
+  
+  @Override
+  public Boolean cronJobToJob(TAutoJob autoJob) {
+    V1beta1CronJob cronJob = readCronJob(autoJob.getModuleId(), autoJob.getId());
+    V1Job v1Job = Jobs.cronJobToJob(cronJob, cronJob.getMetadata().getName() + "-" + RandomUtils.nextInt(500, 100000));
+    if (v1Job != null) {
+      BatchV1Api batchV1Api = k8sApiService.getBatchV1Api();
+      V1Job job = null;
+      try {
+        job = batchV1Api.createNamespacedJob(cronJob.getMetadata().getNamespace(), v1Job,
+            CreateParam.pretty, CreateParam.dryRun, CreateParam.fieldManager);
+        if (job != null) {
+          return true;
+        }
+      } catch (ApiException e) {
+        throw new ServiceException("创建job失败！！！");
+      }
+      
+    }
+    return false;
+  }
+  
+  @Override
+  public Boolean suspendOrRecoverJob(TAutoJob autoJob) {
+    BatchV1beta1Api batchV1Api = k8sApiService.getBatchV1beta1Api();
+    V1beta1CronJob cronJob = readCronJob(autoJob.getModuleId(), autoJob.getId());
+    if (cronJob == null) {
+      throw new ServiceException("该任务没有找到！！！");
+    }
+    V1beta1CronJobSpec jobSpec = cronJob.getSpec();
+    jobSpec.setSuspend(!jobSpec.getSuspend());
+    try {
+      batchV1Api.replaceNamespacedCronJob(cronJob.getMetadata().getName(), cronJob.getMetadata().getNamespace(), cronJob, ReplaceParam.pretty, ReplaceParam.dryRun, ReplaceParam.fieldManager);
+    } catch (ApiException e) {
+      throw new ServiceException("暂停job失败！！！");
+    }
+    return true;
   }
 }

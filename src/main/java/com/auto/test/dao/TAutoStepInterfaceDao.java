@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * (TAutoStepInterfaceDao)表数据库访问层
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-21 15:50:39
  */
 public interface TAutoStepInterfaceDao extends BaseMapper<TAutoStepInterface> {

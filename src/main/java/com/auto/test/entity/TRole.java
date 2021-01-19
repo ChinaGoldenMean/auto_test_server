@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * (TRole)实体类
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-18 16:51:00
  */
 @Data

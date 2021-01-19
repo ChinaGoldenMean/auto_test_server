@@ -39,7 +39,7 @@ public class ThreadPoolConfig {
     executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
     return executor;
   }
-  
+
 //  /**
 //   * 执行周期性或定时任务
 //   */

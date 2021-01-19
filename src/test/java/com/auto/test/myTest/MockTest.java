@@ -34,6 +34,7 @@ public class MockTest {
     Assert.assertEquals(result, "zuozewei");
     
   }
+  
   @Test
   public void test2() {
     Date date1 = new Date();
@@ -43,8 +44,8 @@ public class MockTest {
       e.printStackTrace();
     }
     Date date2 = new Date();
-    System.out.println(date1+":"+date2);
-    System.out.println("相差"+(date2.getTime()-date1.getTime()));
+    System.out.println(date1 + ":" + date2);
+    System.out.println("相差" + (date2.getTime() - date1.getTime()));
     
   }
   

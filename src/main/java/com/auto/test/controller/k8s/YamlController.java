@@ -33,7 +33,7 @@ public class YamlController {
    */
   @Resource
   private TAutoYamlService yamlService;
- 
+  
   /**
    * 通过主键查询单条数据
    *
@@ -42,7 +42,7 @@ public class YamlController {
    */
   @GetMapping("selectOne")
   public JsonResult<TAutoYaml> selectOne(String id) {
-  
+    
     TAutoYaml tAutoYaml = yamlService.getById(id);
     return JsonResult.success(tAutoYaml);
   }
@@ -57,7 +57,7 @@ public class YamlController {
   
   @PostMapping("saveOrUpdate")
   public JsonResult<Boolean> saveOrUpdate(@RequestBody TAutoYaml job) {
-  
+
 //    if (classifyList != null && classifyList.size() >= 1) {
 //      if (StringUtils.isEmpty(job.getId()) || !StringUtils.isEmpty(job.getId()) && !job.getId().equals(classifyList.get(0).getId())) {
 //        //新增,更新时不能存在.

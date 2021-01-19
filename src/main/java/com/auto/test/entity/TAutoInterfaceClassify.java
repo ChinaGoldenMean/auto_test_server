@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * (TAutoInterfaceClassify)实体类
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-21 15:50:39
  */
 @Data
@@ -58,8 +58,8 @@ public class TAutoInterfaceClassify implements Serializable {
   public TAutoInterfaceClassify(String mapKey) {
     String[] classifyNames = mapKey.split("/");
     String classifyName = classifyNames[0];
-    if (classifyNames != null&&classifyNames.length>1) {
-      classifyName =  classifyName+ "-" + classifyNames[1];
+    if (classifyNames != null && classifyNames.length > 1) {
+      classifyName = classifyName + "-" + classifyNames[1];
     }
     this.name = classifyName;
   }

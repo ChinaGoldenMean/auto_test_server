@@ -45,6 +45,4 @@ public class K8sManageNamespaceController {
     return JsonResult.success(namespacePageList);
   }
   
-  
-  
 }

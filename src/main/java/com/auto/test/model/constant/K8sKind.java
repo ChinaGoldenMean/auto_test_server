@@ -1,7 +1,7 @@
 package com.auto.test.model.constant;
 
 public enum K8sKind {
-  CRON_JOB("CronJob"), NAMESPACE("Namespace") ;
+  CRON_JOB("CronJob"), NAMESPACE("Namespace");
   public String value;
   
   K8sKind(String value) {

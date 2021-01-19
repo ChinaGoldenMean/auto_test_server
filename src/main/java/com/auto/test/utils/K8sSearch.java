@@ -34,11 +34,12 @@ public class K8sSearch {
   
   @Resource
   TAutoManageEnvDao manageEnvDao;
+  
   @SneakyThrows
   public <T> List<T> pagingOrder(SearchParamDTO vo, List<T> list, Function<T, V1ObjectMeta> getV1ObjectMeta, String namespaces) {
     
     String filterName = vo.getFilterBy();
-   // String sortBy = vo.getSortBy();
+    // String sortBy = vo.getSortBy();
     OrderItem order = vo.getOrder();
     Long limit = vo.getItemsPerPage();
     Long skip = vo.getSkip();
@@ -66,43 +67,43 @@ public class K8sSearch {
   }
   
   public <T> List<T> filterByNamespaces(List<T> list, Function<T, V1ObjectMeta> getV1ObjectMeta, String namespaces) {
-    if (k8sApiService.isNotProd() ) {
+    if (k8sApiService.isNotProd()) {
       if (!StringUtils.isEmpty(namespaces) && namespaces.indexOf(K8sParam.NAMESPACE_ALL) < 0) {
         String[] namespacesArray = namespaces.split(",");
         List<String> namespacesList = new ArrayList<String>(Arrays.asList(namespacesArray));
         namespacesList.remove(0);
-      
+        
         list = list.stream().filter(
             t -> {
               return namespacesList.contains(getV1ObjectMeta.apply(t).getNamespace());
             }
         ).collect(Collectors.toList());
-     
-      
+        
       }
     }
-  
+    
     return list;
   }
-  public <T> List<T> filterByNamespaces(List<T> list, Function<T, V1ObjectMeta> getV1ObjectMeta, String namespaces,SearchParamDTO vo) {
-    list=filterByNamespaces(list,getV1ObjectMeta,namespaces);
+  
+  public <T> List<T> filterByNamespaces(List<T> list, Function<T, V1ObjectMeta> getV1ObjectMeta, String namespaces, SearchParamDTO vo) {
+    list = filterByNamespaces(list, getV1ObjectMeta, namespaces);
     List<String> modelNames = vo.getModelNames();
-    if(modelNames!=null&&modelNames.size()>0){
-    
+    if (modelNames != null && modelNames.size() > 0) {
+      
       list = list.stream().filter(
           t -> {
             
-            for (String modelName : modelNames){
+            for (String modelName : modelNames) {
               String namespace = getV1ObjectMeta.apply(t).getNamespace();
               
-              if(namespace.contains(modelName)){
+              if (namespace.contains(modelName)) {
                 return true;
               }
-            
+              
             }
             return false;
             //    return modelNames.contains(getV1ObjectMeta.apply(t).getNamespace());
-          
+            
           }
       ).collect(Collectors.toList());
     }
@@ -123,23 +124,22 @@ public class K8sSearch {
   }
   
   public int baseSort(Date data1, Date data2, String name1, String name2, OrderItem order) {
-    if (order!=null) {
-     
+    if (order != null) {
+      
       if (CREATE_TIME_STAMP.equals(order.getColumn())) {
-        if(order.isAsc()){
+        if (order.isAsc()) {
           return data1.compareTo(data2);
-        }else{
+        } else {
           return data2.compareTo(data1);
         }
         
-        
       } else {
-        if(order.isAsc()){
+        if (order.isAsc()) {
           return name1.compareTo(name2);
-        }else{
+        } else {
           return name2.compareTo(name1);
         }
-       
+        
       }
       
     } else {

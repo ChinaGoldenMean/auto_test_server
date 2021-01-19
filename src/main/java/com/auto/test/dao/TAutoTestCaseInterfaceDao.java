@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 /**
  * (TAutoTestCaseInterfaceDao)表数据库访问层
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-21 15:50:39
  */
 public interface TAutoTestCaseInterfaceDao extends BaseMapper<TAutoTestcase> {

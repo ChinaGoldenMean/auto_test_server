@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * (TAutoModule)表数据库访问层
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-21 15:52:59
  */
 public interface TAutoModuleDao extends BaseMapper<TAutoModule> {

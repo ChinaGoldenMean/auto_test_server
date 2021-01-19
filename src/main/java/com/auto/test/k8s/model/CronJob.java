@@ -41,7 +41,7 @@ public class CronJob extends Base {
   @ApiModelProperty(value = "任务集合")
   private ActiveJobVo activeJobs;
   
-  public  CronJob initCronJob(V1beta1CronJob v1beta1CronJob) {
+  public CronJob initCronJob(V1beta1CronJob v1beta1CronJob) {
     initBase(v1beta1CronJob.getKind(), v1beta1CronJob, V1beta1CronJob::getMetadata);
     this.schedule = v1beta1CronJob.getSpec().getSchedule();
     this.suspend = v1beta1CronJob.getSpec().getSuspend();
@@ -56,9 +56,11 @@ public class CronJob extends Base {
     
     return this;
   }
-  public  CronJob(){
+  
+  public CronJob() {
   
   }
+  
   public CronJob(V1beta1CronJob v1beta1CronJob, List<Job> jobList, List<Event> eventList) {
     initCronJob(v1beta1CronJob);
     this.eventList = eventList;

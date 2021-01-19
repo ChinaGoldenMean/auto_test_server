@@ -13,7 +13,7 @@ public class AssertResult implements Serializable {
   private String extractExpress;
   private String expectRelation;
   private String expectValue;
-//  private Integer regexNo;
+  //  private Integer regexNo;
   private String realType;
   private String realValue;
   private Boolean result;

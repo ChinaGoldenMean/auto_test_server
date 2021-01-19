@@ -46,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 关闭csrf保护功能（跨域访问）
         .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/api/**","/websocket/**").permitAll();//访问API下无需登录认证权限
+        .antMatchers("/api/**", "/websocket/**").permitAll();//访问API下无需登录认证权限
     // 基于token，所以不需要session
     //   http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     

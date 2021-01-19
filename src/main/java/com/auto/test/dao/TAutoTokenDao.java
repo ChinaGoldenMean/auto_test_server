@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * (TAutoToken)表数据库访问层
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-21 15:53:01
  */
 public interface TAutoTokenDao extends BaseMapper<TAutoToken> {

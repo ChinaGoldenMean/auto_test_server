@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * (TAutoToken)表服务接口
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-18 15:28:39
  */
 public interface TAutoTokenService {

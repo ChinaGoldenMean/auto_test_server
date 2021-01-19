@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * (TRole)表数据库访问层
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-18 16:51:00
  */
 public interface TRoleDao extends BaseMapper<TRole> {

@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 权限管理表(TAutoPermission)实体类
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-18 15:10:34
  */
 @Data

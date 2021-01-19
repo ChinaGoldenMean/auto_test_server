@@ -79,7 +79,7 @@ public class K8sYamlDTO implements Serializable {
     }
   }
   
-  public K8sYamlDTO(JSONObject obj,String metadataName) {
+  public K8sYamlDTO(JSONObject obj, String metadataName) {
     
     if (obj != null) {
       

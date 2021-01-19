@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * (TAutoInterface)表控制层
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-21 15:50:39
  */
 @Slf4j
@@ -49,9 +49,9 @@ public class InterfaceController {
   public JsonResult<TApiResult> debugTApi(@RequestBody TAutoInterface api) {
     Map<String, Object> caseVars = new ConcurrentHashMap<>();
     List<ApiParam> params = new ArrayList<>();
-   
-      TApiResult tApiResult = requestExecutorServer.executeHttpRequest(api, null, caseVars, params);
-      return JsonResult.success(tApiResult);
+    
+    TApiResult tApiResult = requestExecutorServer.executeHttpRequest(api, null, caseVars, params);
+    return JsonResult.success(tApiResult);
     
   }
   
@@ -109,7 +109,7 @@ public class InterfaceController {
   
   @PostMapping(value = "/swaggerImport/{{moduleId}}")
   @ApiOperation("批量导入接口")
-  public JsonResult<Boolean> swaggerImport( @RequestParam("moduleId") String moduleId,String apiUrl) {
+  public JsonResult<Boolean> swaggerImport(@RequestParam("moduleId") String moduleId, String apiUrl) {
     
     return JsonResult.success(interfaceService.swaggerImport(apiUrl, moduleId));
   }

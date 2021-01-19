@@ -1,9 +1,9 @@
 FROM mayan31370/openjdk-alpine-with-chinese-timezone:8-jdk
 ENV MYPATH /home/server
 #修改镜像时区
-RUN rm -f /etc/localtime \
-&& ln -sv /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-&& echo "Asia/Shanghai" > /etc/timezone
+#RUN rm -f /etc/localtime \
+#&& ln -sv /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+#&& echo "Asia/Shanghai" > /etc/timezone
 
 WORKDIR $MYPATH
 COPY . .

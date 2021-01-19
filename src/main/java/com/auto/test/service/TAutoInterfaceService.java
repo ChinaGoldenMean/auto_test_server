@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 /**
  * (TAutoInterfaceClassify)表服务接口
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-21 15:50:39
  */
 public interface TAutoInterfaceService extends IService<TAutoInterface> {

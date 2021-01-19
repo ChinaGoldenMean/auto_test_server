@@ -45,6 +45,7 @@ public class Page<T> implements Serializable {
     this.countPage = (totalItemVo + vo.getItemsPerPage() - 1)
         / vo.getItemsPerPage();
   }
+  
   public Page(SearchParamDTO vo, T data, Long totalItemVo, Long itemsPerPageVo) {
     this.obj = data;
     this.totalItem = totalItemVo;

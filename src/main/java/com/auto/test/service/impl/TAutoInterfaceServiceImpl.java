@@ -34,7 +34,7 @@ import java.util.Map;
 /**
  * (TAutoInterfaceClassify)表服务实现类
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-21 15:50:39
  */
 @Service
@@ -45,6 +45,7 @@ public class TAutoInterfaceServiceImpl extends ServiceImpl<TAutoInterfaceDao, TA
   
   @Resource
   private TAutoModelService modelService;
+  
   @Transactional
   @Override
   public Boolean swaggerImport(String apiUrl, String moduleId) {
@@ -90,13 +91,13 @@ public class TAutoInterfaceServiceImpl extends ServiceImpl<TAutoInterfaceDao, TA
                 
                 for (Parameter parameter : parameters) {
                   String in = parameter.getIn();
-                 ;
-       JSONObject jsonParameter = JSONObject.parseObject( JSON.toJSONString(parameter)) ;
+                  ;
+                  JSONObject jsonParameter = JSONObject.parseObject(JSON.toJSONString(parameter));
                   //           JSONObject.parseObject(parameter.toString());
                   if ("body".equals(in)) {
                     autoInterface.setReqBodyType("raw");
-                   
-                    autoInterface.setReqBodyJson( JSON.toJSONString(jsonParameter.get("schema")));
+                    
+                    autoInterface.setReqBodyJson(JSON.toJSONString(jsonParameter.get("schema")));
                   } else if ("formData".equals(in)) {
                     autoInterface.setReqBodyType("form");
                     jsonParameter.remove("in");

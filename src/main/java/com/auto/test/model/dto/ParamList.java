@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "InterfaceClassifyParam", description = "列表参数")
+@ApiModel(value = "ParamList", description = "列表参数")
 public class ParamList extends PageParamBase {
   /**
    * 接口名称

@@ -57,13 +57,13 @@ public class JobServiceImpl extends K8sSearch implements JobService {
     
     List<V1Job> items;
     try {
-      if (namespace.indexOf(K8sParam.NAMESPACE_ALL) == 0) {
-        items = batchV1Api.listJobForAllNamespaces(ListParam.allowWatchBookmarks, ListParam._continue, ListParam.fieldSelector, ListParam.labelSelector, ListParam.limit, ListParam.pretty, ListParam.resourceVersion, ListParam.timeoutSeconds, ListParam.watch).getItems();
-        items = filterByNamespaces(items, V1Job::getMetadata, namespace,paramVo);
-        
-      } else {
-        items = batchV1Api.listNamespacedJob(namespace, ListParam.pretty, ListParam.allowWatchBookmarks, ListParam._continue, ListParam.fieldSelector, ListParam.labelSelector, ListParam.limit, ListParam.resourceVersion, ListParam.timeoutSeconds, ListParam.watch).getItems();
-      }
+      //  if (namespace.indexOf(K8sParam.NAMESPACE_ALL) == 0) {
+      items = batchV1Api.listJobForAllNamespaces(ListParam.allowWatchBookmarks, ListParam._continue, ListParam.fieldSelector, ListParam.labelSelector, ListParam.limit, ListParam.pretty, ListParam.resourceVersion, ListParam.timeoutSeconds, ListParam.watch).getItems();
+      items = filterByNamespaces(items, V1Job::getMetadata, namespace, paramVo);
+
+//      } else {
+//        items = batchV1Api.listNamespacedJob(namespace, ListParam.pretty, ListParam.allowWatchBookmarks, ListParam._continue, ListParam.fieldSelector, ListParam.labelSelector, ListParam.limit, ListParam.resourceVersion, ListParam.timeoutSeconds, ListParam.watch).getItems();
+//      }
     } catch (ApiException e) {
       throw new ServiceException(ResultCode.QUERY_JOB_FAIL);
     }
@@ -106,7 +106,7 @@ public class JobServiceImpl extends K8sSearch implements JobService {
         try {
           v1Job = batchV1Api.readNamespacedJob(jobName, nameSpace, ReadParam.pretty, ReadParam.exact, ReadParam.export);
         } catch (ApiException e) {
-          throw new ServiceException(ResultCode.QUERY_JOB_FAIL );
+          throw new ServiceException(ResultCode.QUERY_JOB_FAIL);
         }
         v1Jobs.add(v1Job);
       });
@@ -125,7 +125,7 @@ public class JobServiceImpl extends K8sSearch implements JobService {
     try {
       v1Job = batchV1Api.readNamespacedJob(name, nameSpace, ReadParam.pretty, ReadParam.exact, ReadParam.export);
     } catch (ApiException e) {
-      throw new ServiceException(ResultCode.QUERY_JOB_ERROR );
+      throw new ServiceException(ResultCode.QUERY_JOB_ERROR);
     }
     //  V1PodList v1PodList = podService.listV1Pod(v1Job.getMetadata(), true, "Job");
     V1PodList v1PodList = podService.listV1Pod(v1Job.getSpec().getSelector(), v1Job.getMetadata().getNamespace(), v1Job.getMetadata().getName());
@@ -143,18 +143,16 @@ public class JobServiceImpl extends K8sSearch implements JobService {
       V1DeleteOptions v1DeleteOptions = new V1DeleteOptions();
       Long gracePeriodSeconds = 3L;
       v1DeleteOptions.setGracePeriodSeconds(gracePeriodSeconds);
-      Call call =batchV1Api.deleteNamespacedJobCall(name,
-          nameSpace, DeleteParam.pretty, DeleteParam.dryRun, DeleteParam.gracePeriodSeconds, DeleteParam.orphanDependents, DeleteParam.propagationPolicy, v1DeleteOptions,null);
-      if(call!=null){
+      Call call = batchV1Api.deleteNamespacedJobCall(name,
+          nameSpace, DeleteParam.pretty, DeleteParam.dryRun, DeleteParam.gracePeriodSeconds, DeleteParam.orphanDependents, DeleteParam.propagationPolicy, v1DeleteOptions, null);
+      if (call != null) {
         call.execute();
         return true;
       }
     } catch (ApiException | IOException e) {
-      throw new ServiceException(ResultCode.QUERY_JOB_ERROR );
+      throw new ServiceException(ResultCode.QUERY_JOB_ERROR);
     }
     return false;
   }
-  
-  
   
 }

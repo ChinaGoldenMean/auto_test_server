@@ -32,8 +32,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
    */
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-   // registry.addResourceHandler("/profile/**")
-      //  .addResourceLocations(ResourceUtils.FILE_URL_PREFIX + RabbitConfig.profile);
+    // registry.addResourceHandler("/profile/**")
+    //  .addResourceLocations(ResourceUtils.FILE_URL_PREFIX + RabbitConfig.profile);
     // 解决swagger无法访问
     
     registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
@@ -44,7 +44,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
   }
   
   @Bean
-  public CronitorClient newCronitorClient(){
+  public CronitorClient newCronitorClient() {
     return new CronitorClient();
   }
 }

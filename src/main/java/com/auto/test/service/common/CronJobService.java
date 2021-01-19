@@ -25,6 +25,12 @@ public interface CronJobService {
    * @return
    */
   V1beta1CronJob readCronJob(String nameSpace, String name);
+  
   Boolean createJob(String name, String selfLink);
+  
   Boolean createCronJob(TAutoJob job);
+  
+  Boolean cronJobToJob(TAutoJob autoJob);
+  
+  Boolean suspendOrRecoverJob(TAutoJob autoJob);
 }

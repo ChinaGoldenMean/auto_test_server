@@ -62,16 +62,16 @@ public class K8sPodLogService {
     String jobName = parameterMap.get("jobName").get(0);
     String token = parameterMap.get("token").get(0);
     String nameSpace = parameterMap.get("nameSpace").get(0);
-    if (!checkParamter(session, jobName,   token, nameSpace)) {
+    if (!checkParamter(session, jobName, token, nameSpace)) {
       return;
     }
     
     this.session = session;
     webSocketSessionSet.add(session);
-    if (!StringUtils.isEmpty(env) && K8sConstant.PROD.equalsIgnoreCase(env) ) {
+    if (!StringUtils.isEmpty(env) && K8sConstant.PROD.equalsIgnoreCase(env)) {
       throw new ServiceException(ResultCode.FORBIDDEN);
     }
-    call = podService.namespacedPodLogCallByJobName( nameSpace, jobName);
+    call = podService.namespacedPodLogCallByJobName(nameSpace, jobName);
     try {
       Response response = call.execute();
       
@@ -98,8 +98,8 @@ public class K8sPodLogService {
   }
   
   @SneakyThrows
-  private Boolean checkParamter(Session session, String jobName,  String token, String nameSpace) {
-    log.info("参数传递:   podName: {}, containerName: {},token:{}", jobName,  token);
+  private Boolean checkParamter(Session session, String jobName, String token, String nameSpace) {
+    log.info("参数传递:   podName: {}, containerName: {},token:{}", jobName, token);
     
     if (Objects.isNull(jobName)) {
       session.getBasicRemote().sendText("jobName不能为空");

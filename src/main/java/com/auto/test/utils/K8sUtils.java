@@ -127,10 +127,10 @@ public class K8sUtils {
 //    }
 //    return message;
 //  }
-  public static K8sYamlDTO transObject2Vo(Object obj,String metadataName) {
+  public static K8sYamlDTO transObject2Vo(Object obj, String metadataName) {
     String strJson = obj.toString();
     JSONObject json = JSONObject.parseObject(strJson);
-    K8sYamlDTO dto = new K8sYamlDTO(json,metadataName);
+    K8sYamlDTO dto = new K8sYamlDTO(json, metadataName);
     return dto;
   }
   
@@ -140,12 +140,12 @@ public class K8sUtils {
    * @param yamlFile
    * @return
    */
-  public static K8sYamlDTO transYaml2Vo(File yamlFile,String metadataName) throws IOException {
+  public static K8sYamlDTO transYaml2Vo(File yamlFile, String metadataName) throws IOException {
     K8sYamlDTO k8SYamlDTO = null;
     if (yamlFile != null && yamlFile.exists()) {
       Object o = Yaml.load(yamlFile);
       log.info(o.toString());
-      k8SYamlDTO = transObject2Vo(o,metadataName);
+      k8SYamlDTO = transObject2Vo(o, metadataName);
     }
     return k8SYamlDTO;
   }

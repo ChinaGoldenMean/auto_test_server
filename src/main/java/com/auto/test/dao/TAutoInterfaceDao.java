@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 /**
  * (TAutoInterfaceDao)表数据库访问层
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-21 15:50:39
  */
 public interface TAutoInterfaceDao extends BaseMapper<TAutoInterface> {

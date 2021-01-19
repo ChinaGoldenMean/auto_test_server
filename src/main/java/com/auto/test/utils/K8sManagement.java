@@ -4,11 +4,13 @@ import com.auto.test.common.exception.ServiceException;
 import com.auto.test.model.bo.base.ResultCode;
 import io.kubernetes.client.Discovery;
 import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.openapi.apis.*;
 import io.kubernetes.client.util.ClientBuilder;
 import io.kubernetes.client.util.Config;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -22,7 +24,8 @@ import java.io.InputStream;
 public class K8sManagement {
   protected String k8sConfig = null;
   private ApiClient apiClient;
-  
+  @Value("${spring.profiles.active}")
+  private String env;
   public void setApiClient(ApiClient apiClient) {
     this.apiClient = apiClient;
   }
@@ -131,15 +134,10 @@ public class K8sManagement {
     if (k8sConfig == null) {
       throw new ServiceException(ResultCode.K8S_CONFIG_ERROR);
     }
-    if (k8sConfig.equals("default")) {
-      //获取本机集群
-      try {
-        apiClient = ClientBuilder.cluster().build();
-      } catch (IOException e) {
-        log.error("初始化k8s失败!", e);
-        
-      }
-    } else {
+//    if (k8sConfig.equals("default")) {
+//      //获取本机集群
+//      try {
+    
       
       try (InputStream resourceAsStream = new ByteArrayInputStream(k8sConfig.getBytes("utf-8"))) {
         
@@ -149,7 +147,7 @@ public class K8sManagement {
         log.error("初始化k8s失败!", e);
         
       }
-    }
+    
     
     if (apiClient != null) {
       io.kubernetes.client.openapi.Configuration.setDefaultApiClient(apiClient);

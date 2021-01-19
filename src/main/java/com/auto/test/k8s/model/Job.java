@@ -28,6 +28,7 @@ public class Job extends Builder {
   private Integer completions = null;
   @ApiModelProperty(value = "事件集合")
   private List<Event> eventList = new ArrayList<>();
+  
   public Job initJob(V1Job v1Job, V1PodList v1PodList, Set<Event> eventList) {
     initBase(v1Job.getKind(), v1Job, V1Job::getMetadata);
     setContainer(v1Job.getSpec(), V1JobSpec::getTemplate);
@@ -35,9 +36,11 @@ public class Job extends Builder {
     this.parallelism = v1Job.getSpec().getParallelism();
     return this;
   }
-  public Job(){
+  
+  public Job() {
   
   }
+  
   public Job(V1Job v1Job, V1PodList v1PodList,
              Set<Event> eventList, List<Event> podEventList) {
     initJob(v1Job, v1PodList, eventList);

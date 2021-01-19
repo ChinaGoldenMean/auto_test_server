@@ -52,8 +52,10 @@ public interface PodService {
    * @param containerName
    * @return
    */
-  Call namespacedPodLogCall(  String nameSpace, String podName, String containerName);
-  Call namespacedPodLogCallByJobName(  String nameSpace, String jobName);
+  Call namespacedPodLogCall(String nameSpace, String podName, String containerName);
+  
+  Call namespacedPodLogCallByJobName(String nameSpace, String jobName);
+  
   /**
    * 根据选择器查询容器组集合
    *

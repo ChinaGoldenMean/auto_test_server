@@ -22,7 +22,7 @@ public class SearchParamDTO implements Serializable {
   
   @ApiModelProperty(value = "关键词搜索")
   private String filterBy;
-//  @ApiModelProperty(value = "排序关键字 a(升序) d(降序)  name (名称) createTimeStamp (创建时间) 默认(d,createTimeStamp)")
+  //  @ApiModelProperty(value = "排序关键字 a(升序) d(降序)  name (名称) createTimeStamp (创建时间) 默认(d,createTimeStamp)")
 //  private String sortBy = "d,createTimeStamp";
   @ApiModelProperty(value = "排序关键字  column 只有 name (名称) createTimeStamp (创建时间) 两个值.")
   private OrderItem order;
@@ -43,12 +43,11 @@ public class SearchParamDTO implements Serializable {
     if (this.itemsPerPage == null || this.itemsPerPage <= 0) {
       throw new NullPointerException("每页的数量itemsPerPage 参数不能为空,不能小于0");
     }
-  
+    
     OrderItem order = this.order;
-    if (order==null) {
+    if (order == null) {
       throw new NullPointerException("排序关键字orders错误");
     }
-    
     
   }
   

@@ -18,5 +18,6 @@ public interface NamespaceService {
   Page<List<Namespace>> getNamespaceList(SearchParamDTO paramVo);
   
   V1Namespace nameSpacesByName(String name);
+  
   Boolean createNamespace(String moduleId);
 }

@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * (TAutoManageEnv)实体类
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-30 16:00:37
  */
 @Data

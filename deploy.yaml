@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: auto-test-server
-  namespace: default
+  namespace: auto-test
   labels:
     app: auto-test-server
 spec:
@@ -15,10 +15,18 @@ spec:
       labels:
         app: auto-test-server
     spec:
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: auto-test-certs
+          secret:
+            secretName: auto-test-certs
       containers:
         - name: auto-server
+          imagePullPolicy: Never
           image: registry.cn-hangzhou.aliyuncs.com/litiewang/litiewang:20210111155855
-          command: ["java","-jar","-Dagentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005","-Duser.timezone=Asia/Jerusalem","-Dspring.profiles.active=prod","app.jar"]
+          command: ["java","-jar","-Dagentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005","-Duser.timezone=GMT+8","-Dspring.profiles.active=prod","app.jar"]
           ports:
             - containerPort: 80
               protocol: TCP
@@ -38,21 +46,36 @@ spec:
               port: 80
             initialDelaySeconds: 30
             timeoutSeconds: 30
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+              readOnly: true
+            - name: auto-test-certs
+              mountPath: /certs
 
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: auto-test-server-service
-  namespace: default
-  labels:
-    app: auto-test-server
-spec:
-  type: NodePort
-  ports:
-    - name: http
-      port: 80
-      nodePort: 31000
-  selector:
-    app: auto-test-server
+#---
+#
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: auto-test-server-service
+#  namespace: auto-test
+#  labels:
+#    app: auto-test-server
+#spec:
+#  type: NodePort
+#  ports:
+#    - name: http
+#      port: 80
+#      nodePort: 31000
+#  selector:
+#    app: auto-test-server
+#---
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  labels:
+#    k8s-app: auto-test
+#  name: auto-test-certs
+#  namespace: auto-test
+#type: Opaque

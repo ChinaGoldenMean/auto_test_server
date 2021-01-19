@@ -8,8 +8,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
 
-public interface TAutoJobDao  extends BaseMapper<TAutoJob> {
-    
-    List<TJobSuiteApi> jobSuiteListByid(String jobId);
+public interface TAutoJobDao extends BaseMapper<TAutoJob> {
+  
+  List<TJobSuiteApi> jobSuiteListByid(String jobId);
+  
   JobDto selectOneJob(String id);
 }

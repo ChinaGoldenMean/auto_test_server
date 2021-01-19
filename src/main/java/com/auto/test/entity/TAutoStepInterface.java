@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * (TAutoStepInterface)实体类
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-23 15:45:40
  */
 @Data
@@ -41,7 +41,7 @@ public class TAutoStepInterface implements Serializable {
   /**
    * 状态：1启用 0禁用
    */
-  @ApiModelProperty(value = "是否启用,1启用 0禁用", required = true,example ="0")
+  @ApiModelProperty(value = "是否启用,1启用 0禁用", required = true, example = "0")
   private Integer status;
   
   @ApiModelProperty(value = "源接口id", required = true)
@@ -111,7 +111,7 @@ public class TAutoStepInterface implements Serializable {
   private String updateBy;
   @ApiModelProperty(hidden = true)
   private Date updateTime;
-  @ApiModelProperty(value = "顺序",example ="1")
+  @ApiModelProperty(value = "顺序", example = "1")
   private Integer sort;
   
 }

@@ -10,14 +10,17 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
+          volumes:
+            - name: localtime
+              hostPath:
+                path: /etc/localtime
           containers:
             - name: cronjob
-              image: registry.cn-hangzhou.aliyuncs.com/litiewang/litiewang:20210111154534
-              command: ["java","-jar","-Dagentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005","-Duser.timezone=Asia/Jerusalem","-Dspring.profiles.active=prod","app.jar"]
-              args:
+              image: registry.cn-hangzhou.aliyuncs.com/litiewang/litiewang:20210112103105
+              command: ["java","-jar","-Dagentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005","-Duser.timezone=GMT+8","-Dspring.profiles.active=prod","app.jar"]
               env:
                 - name: MYSQL_SERVICE_HOST
-                  value: '192.168.1.122'
+                  value: '192.168.1.120'
                 - name: MYSQL_SERVICE_PORT
                   value: '3306'
                 - name: USER_NAME
@@ -31,3 +34,7 @@ spec:
                   port: 8800
                 initialDelaySeconds: 30
                 timeoutSeconds: 30
+              volumeMounts:
+                - name: localtime
+                  mountPath: /etc/localtime
+                  readOnly: true

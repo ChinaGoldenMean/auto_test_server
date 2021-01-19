@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * (TAutoModule)实体类
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-18 15:15:46
  */
 @Data

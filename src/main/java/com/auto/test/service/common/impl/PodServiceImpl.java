@@ -235,25 +235,25 @@ public class PodServiceImpl extends K8sSearch implements PodService {
   
   @Override
   public Call namespacedPodLogCallByJobName(String nameSpace, String jobName) {
-    Job job = jobService.readJob(nameSpace,jobName);
-    if(job==null){
+    Job job = jobService.readJob(nameSpace, jobName);
+    if (job == null) {
       throw new ServiceException("获取命名空间:" + nameSpace + " 任务名称" + jobName + "日志失败!!");
     }
-    List<Pod> podList =job.getPodList();
-    if(podList==null||podList.size()==0){
+    List<Pod> podList = job.getPodList();
+    if (podList == null || podList.size() == 0) {
       throw new ServiceException("没有找到相应pod");
     }
     //默认取第一个。
     Pod pod = podList.get(0);
-    String podNameSpace =pod.getMeta_namespace();
+    String podNameSpace = pod.getMeta_namespace();
     String podName = pod.getMeta_name();
-    List<Container> containers =pod.getContainers();
-    if(containers==null||containers.size()==0){
+    List<Container> containers = pod.getContainers();
+    if (containers == null || containers.size() == 0) {
       throw new ServiceException("没有找到相应容器");
     }
     
     String containerName = containers.get(0).getName();
-    return namespacedPodLogCall(  podNameSpace,   podName,   containerName);
+    return namespacedPodLogCall(podNameSpace, podName, containerName);
   }
   
   @Override

@@ -56,8 +56,9 @@ public class ProbeController {
     
     return JsonResult.success(JSON.parseObject(result));
   }
+  
   @PostMapping("test-form")
-  @ApiImplicitParam(paramType="form")
+  @ApiImplicitParam(paramType = "form")
   public JsonResult<Boolean> saveOrUpdate(@RequestBody TAutoInterface classifyParam) {
     
     return JsonResult.success(true);

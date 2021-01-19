@@ -31,23 +31,24 @@ public class JobVo implements Serializable {
     this.jobs = jobs;
     setStatus(v1jobs);
   }
+  
   private void setStatus(List<V1Job> v1jobs) {
     if (CollectionUtils.isNotEmpty(v1jobs)) {
       Integer running = 0;
       Integer failed = 0;
       for (V1Job v1Job : v1jobs) {
         V1JobStatus jobStatus = v1Job.getStatus();
-        if (jobStatus == null){
+        if (jobStatus == null) {
           running++;
-        }else{
+        } else {
           Integer succeeded = jobStatus.getSucceeded();
-          if(succeeded != null && succeeded > 0){
+          if (succeeded != null && succeeded > 0) {
             running++;
-          }else{
+          } else {
             failed++;
           }
         }
-       
+        
       }
       this.status.setRunning(running);
       this.status.setFailed(failed);

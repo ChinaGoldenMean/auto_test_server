@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * (TAutoInterface)实体类
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-22 11:26:09
  */
 @Data
@@ -61,7 +61,7 @@ public class TAutoInterface implements Serializable {
   /**
    * 类型 0公共接口  业务流接口
    */
-  @ApiModelProperty(value = "请求类型 类型默认传0，代表普通接口", required = true,example ="0")
+  @ApiModelProperty(value = "请求类型 类型默认传0，代表普通接口", required = true, example = "0")
   private Integer type;
   
   /**
@@ -73,7 +73,7 @@ public class TAutoInterface implements Serializable {
   /**
    * 状态 0未完成 1已完成
    */
-  @ApiModelProperty(value = "状态 未完成传0，已完成传1", required = true,example ="0")
+  @ApiModelProperty(value = "状态 未完成传0，已完成传1", required = true, example = "0")
   private Integer status;
   
   /**

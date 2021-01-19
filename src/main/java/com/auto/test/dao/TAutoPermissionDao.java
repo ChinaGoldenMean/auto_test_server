@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 权限管理表(TAutoPermission)表数据库访问层
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-21 15:53:00
  */
 public interface TAutoPermissionDao extends BaseMapper<TAutoPermission> {

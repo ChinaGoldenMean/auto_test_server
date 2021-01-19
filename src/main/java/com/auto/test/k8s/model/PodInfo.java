@@ -37,9 +37,11 @@ public class PodInfo extends Status {
     }
     return this;
   }
-  public PodInfo(){
+  
+  public PodInfo() {
   
   }
+  
   public PodInfo(V1PodList v1PodList, Set<Event> eventList) {
     super(v1PodList);
     if (CollectionUtils.isNotEmpty(v1PodList.getItems())) {

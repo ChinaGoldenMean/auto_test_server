@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * 权限管理表(TAutoPermission)表服务实现类
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-18 15:10:34
  */
 @Service

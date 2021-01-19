@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * (TAutoTestcase)实体类
  *
- * @author makejava
+ * @author litiewang
  * @since 2020-12-23 15:33:56
  */
 @Data
