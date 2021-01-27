@@ -5,6 +5,8 @@ import com.auto.test.entity.TAutoInterfaceClassify;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * (TAutoInterfaceDao)表数据库访问层
  *
@@ -14,4 +16,5 @@ import org.apache.ibatis.annotations.Param;
 public interface TAutoInterfaceDao extends BaseMapper<TAutoInterface> {
   
   TAutoInterface selectBySourceId(@Param("sourceId") String sourceId);
+  List<TAutoInterface> selectAll();
 }

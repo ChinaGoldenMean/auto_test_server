@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auto.test.dao.TApiResultDao">
+
+    <resultMap type="com.auto.test.entity.TApiResult" id="apiResult">
+        <id property="id" column="id"/>
+        <result property="caseResultId" column="case_result_id"/>
+        <result property="stepId" column="step_id"/>
+        <result property="stepName" column="step_name"/>
+        <result property="resultType" column="result_type"/>
+        <result property="reqMethod" column="req_method"/>
+        <result property="reqUrl" column="req_url"/>
+        <result property="reqBodyType" column="req_body_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="reqBodyJson" column="req_body_json"/>
+        <result column="rsp_asserts" jdbcType="LONGVARCHAR" property="rspAsserts"
+                typeHandler="com.auto.test.common.handler.typehandler.AssertListTypeHandler"/>
+
+        <result column="req_headers" jdbcType="LONGVARCHAR" property="reqHeaders"
+                typeHandler="com.auto.test.common.handler.typehandler.HeaderListTypeHandler"/>
+        <result column="req_query" jdbcType="LONGVARCHAR" property="reqQuery"
+                typeHandler="com.auto.test.common.handler.typehandler.QueryListTypeHandler"/>
+        <result column="req_body_data" jdbcType="LONGVARCHAR" property="reqBodyData"
+                typeHandler="com.auto.test.common.handler.typehandler.BodyDataListTypeHandler"/>
+
+        <result property="rspStatusCode" column="rsp_status_code"/>
+        <result property="rspBodyType" column="rsp_body_type"/>
+        <result property="rspBody" column="rsp_body"/>
+        <result property="rspBodySize" column="rsp_body_size"/>
+        <result column="rsp_headers" jdbcType="LONGVARCHAR" property="rspHeaders"
+                                                                          typeHandler="com.auto.test.common.handler.typehandler.HeaderListTypeHandler"/>
+
+
+        <result column="rsp_asserts" jdbcType="LONGVARCHAR" property="rspAsserts"
+                                                                        typeHandler="com.auto.test.common.handler.typehandler.AssertResultListTypeHandler"/>
+        <result property="rspTime" column="rsp_time"/>
+        <result property="exception" column="exception"/>
+    </resultMap>
+
+
+    <select id="resultByCaseId" parameterType="string" resultMap="apiResult">
+        select  * from   t_auto_api_result
+        <where>
+
+            <if test="id != null and id != ''">
+                case_result_id = #{id}
+            </if>
+
+        </where>
+    </select>
+
+
+</mapper> 

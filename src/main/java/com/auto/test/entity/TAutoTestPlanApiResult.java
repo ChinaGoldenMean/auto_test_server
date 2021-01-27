@@ -31,9 +31,9 @@ public class TAutoTestPlanApiResult implements Serializable {
   @ApiModelProperty(value = "任务id")
   private String jobId;
   /**
-   * 状态 0未执行 1执行中 2执行完成 3任务超时中断 5执行失败
+   * 状态 0未执行 1执行中 2执行完成   3执行失败
    */
-  @ApiModelProperty(value = "状态 0未执行 1执行中 2执行完成 3任务超时中断 5执行失败")
+  @ApiModelProperty(value = "状态 0未执行 1执行中 2执行完成   3执行失败")
   private Integer status;
   /**
    * 用例集总数

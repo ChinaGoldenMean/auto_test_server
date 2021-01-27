@@ -4,8 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.auto.test.entity.TAutoInterface;
 import com.auto.test.entity.TAutoInterfaceClassify;
 import com.auto.test.model.dto.InterfaceClassifyParam;
+import com.auto.test.model.excel.TAutoInterfaceImport;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * (TAutoInterfaceClassify)表服务接口
@@ -15,5 +19,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface TAutoInterfaceService extends IService<TAutoInterface> {
   Boolean swaggerImport(String apiUrl, String moduleId);
-  
+  Boolean excelImport(MultipartFile file);
+  void download(HttpServletResponse response);
+  void checkInterfaceImport(TAutoInterfaceImport interfaceImport);
 }

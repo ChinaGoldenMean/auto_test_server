@@ -44,4 +44,11 @@
         from t_auto_interface
         where id = #{sourceId,jdbcType=BIGINT}
     </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from t_auto_interface
+    </select>
+
 </mapper>

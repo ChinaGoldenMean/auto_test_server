@@ -102,9 +102,9 @@ public class CronJobServiceImpl extends K8sSearch implements CronJobService {
     try {
       v1beta1CronJob = batchV1beta1Api.readNamespacedCronJob(name, nameSpace, ReadParam.pretty, ReadParam.exact, ReadParam.export);
     } catch (ApiException e) {
-      if (e.getCode() != 404) {
-        throw new ServiceException(ResultCode.QUERY_CRON_JOB_FAIL);
-      }
+//      if (e.getCode() != 404) {
+//        throw new ServiceException(ResultCode.QUERY_CRON_JOB_FAIL);
+//      }
     }
     
     return v1beta1CronJob;

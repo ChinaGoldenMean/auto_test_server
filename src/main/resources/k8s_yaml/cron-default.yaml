@@ -2,7 +2,7 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: cronjob-demo01
-  namespace: default
+  namespace: auto-test
 spec:
   schedule: "0 0 12 * *"
   jobTemplate:
@@ -16,11 +16,11 @@ spec:
                 path: /etc/localtime
           containers:
             - name: cronjob
-              image: registry.cn-hangzhou.aliyuncs.com/litiewang/litiewang:20210112103105
+              image: registry.cn-hangzhou.aliyuncs.com/litiewang/litiewang:20210127145047
               command: ["java","-jar","-Dagentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005","-Duser.timezone=GMT+8","-Dspring.profiles.active=prod","app.jar"]
               env:
                 - name: MYSQL_SERVICE_HOST
-                  value: '192.168.1.120'
+                  value: '134.98.102.79'
                 - name: MYSQL_SERVICE_PORT
                   value: '3306'
                 - name: USER_NAME

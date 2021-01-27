@@ -1,18 +1,24 @@
 package com.auto.test.service.impl;
 
+import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.auto.test.common.exception.ServiceException;
+import com.auto.test.config.excel.UploadInterfaceListener;
 import com.auto.test.dao.TAutoInterfaceClassifyDao;
 import com.auto.test.dao.TAutoInterfaceDao;
 import com.auto.test.entity.TAutoInterface;
 import com.auto.test.entity.TAutoInterfaceClassify;
 import com.auto.test.entity.TAutoModel;
+import com.auto.test.model.excel.TAutoInterfaceExport;
+import com.auto.test.model.excel.TAutoInterfaceImport;
 import com.auto.test.model.po.BodyData;
 import com.auto.test.model.po.Query;
 import com.auto.test.model.po.WebHeader;
 import com.auto.test.service.TAutoInterfaceClassifyService;
 import com.auto.test.service.TAutoInterfaceService;
 import com.auto.test.service.TAutoModelService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.swagger.models.*;
 import io.swagger.models.parameters.AbstractSerializableParameter;
@@ -20,12 +26,18 @@ import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.parser.SwaggerParser;
+import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +58,10 @@ public class TAutoInterfaceServiceImpl extends ServiceImpl<TAutoInterfaceDao, TA
   @Resource
   private TAutoModelService modelService;
   
+  @Resource
+  TAutoInterfaceDao interfaceDao;
+  @Autowired
+  private TAutoInterfaceService interfaceService;
   @Transactional
   @Override
   public Boolean swaggerImport(String apiUrl, String moduleId) {
@@ -91,7 +107,6 @@ public class TAutoInterfaceServiceImpl extends ServiceImpl<TAutoInterfaceDao, TA
                 
                 for (Parameter parameter : parameters) {
                   String in = parameter.getIn();
-                  ;
                   JSONObject jsonParameter = JSONObject.parseObject(JSON.toJSONString(parameter));
                   //           JSONObject.parseObject(parameter.toString());
                   if ("body".equals(in)) {
@@ -144,6 +159,65 @@ public class TAutoInterfaceServiceImpl extends ServiceImpl<TAutoInterfaceDao, TA
     }
     
     return true;
+  }
+  
+  @Override
+  public Boolean excelImport(MultipartFile file) {
+  
+    try {
+      EasyExcel.read(file.getInputStream(), TAutoInterfaceImport.class, new UploadInterfaceListener(interfaceService)).sheet().doRead();
+      
+    } catch (IOException e) {
+      e.printStackTrace();
+      return false;
+    }
+  
+    return true;
+  }
+  
+  @SneakyThrows
+  @Override
+  public void download(HttpServletResponse response) {
+    // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
+    try {
+      response.setContentType("application/vnd.ms-excel");
+      response.setCharacterEncoding("utf-8");
+      // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+      String fileName = URLEncoder.encode("测试", "UTF-8").replaceAll("\\+", "%20");
+      response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+      // 这里需要设置不关闭流
+      List<TAutoInterface> list = interfaceDao.selectAll();
+      List<TAutoInterfaceExport> interfaceExcels = TAutoInterfaceExport.toList(list);
+      EasyExcel.write(response.getOutputStream(), TAutoInterfaceExport.class).autoCloseStream(Boolean.FALSE).sheet("模板")
+          .doWrite(interfaceExcels);
+    } catch (Exception e) {
+      // 重置response
+      response.reset();
+      response.setContentType("application/json");
+      response.setCharacterEncoding("utf-8");
+      Map<String, String> map = new HashMap<String, String>();
+      map.put("status", "failure");
+      map.put("message", "下载文件失败" + e.getMessage());
+      response.getWriter().println(JSON.toJSONString(map));
+    }
+    
+  }
+  
+  @Override
+  public void checkInterfaceImport(TAutoInterfaceImport interfaceImport) {
+    QueryWrapper<TAutoInterface> wrapper = new QueryWrapper<>();
+    wrapper.eq("name", interfaceImport.getName());
+    List<TAutoInterface> autoInterfaceList =  list(wrapper);
+    if (autoInterfaceList != null && autoInterfaceList.size() > 0) {
+      throw new ServiceException(interfaceImport.getName() + "：名称重复");
+    }
+    QueryWrapper<TAutoInterfaceClassify> classifyQueryWrapper = new QueryWrapper<>();
+    classifyQueryWrapper.eq("name", interfaceImport.getClassifyName());
+    List<TAutoInterfaceClassify> classifyList = classifyService.list(classifyQueryWrapper);
+    if (classifyList == null || classifyList.size() == 0) {
+      throw new ServiceException(interfaceImport.getClassifyName() + "：分组名称不存在，请先创建分组");
+    }
+    
   }
   
   private List<WebHeader> getWebHeader(List<String> consumes) {

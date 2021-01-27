@@ -26,13 +26,17 @@ spec:
         - name: auto-server
           imagePullPolicy: Never
           image: registry.cn-hangzhou.aliyuncs.com/litiewang/litiewang:20210111155855
-          command: ["java","-jar","-Dagentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005","-Duser.timezone=GMT+8","-Dspring.profiles.active=prod","app.jar"]
+          command: ["java","-jar","-Xdebug","-Xrunjdwp:transport=dt_socket,suspend=n,server=y,address=5005","-Duser.timezone=GMT+8","-Dspring.profiles.active=prod","app.jar"]
           ports:
-            - containerPort: 80
+            - name: server
+              containerPort: 80
+              protocol: TCP
+            - name: debug
+              containerPort: 5005
               protocol: TCP
           env:
             - name: MYSQL_SERVICE_HOST
-              value: '192.168.1.122'
+              value: '192.168.1.123'
             - name: MYSQL_SERVICE_PORT
               value: '3306'
             - name: USER_NAME
@@ -53,29 +57,3 @@ spec:
             - name: auto-test-certs
               mountPath: /certs
 
-#---
-#
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  name: auto-test-server-service
-#  namespace: auto-test
-#  labels:
-#    app: auto-test-server
-#spec:
-#  type: NodePort
-#  ports:
-#    - name: http
-#      port: 80
-#      nodePort: 31000
-#  selector:
-#    app: auto-test-server
-#---
-#apiVersion: v1
-#kind: Secret
-#metadata:
-#  labels:
-#    k8s-app: auto-test
-#  name: auto-test-certs
-#  namespace: auto-test
-#type: Opaque

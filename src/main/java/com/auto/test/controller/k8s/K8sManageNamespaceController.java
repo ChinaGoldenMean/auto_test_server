@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/namespace")
+@RequestMapping(value = "namespace")
 @Api(tags = "命名空间管理")
 @Slf4j
 public class K8sManageNamespaceController {

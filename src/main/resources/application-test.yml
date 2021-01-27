@@ -7,7 +7,7 @@ spring:
         filters: stat
         driver-class-name: com.mysql.cj.jdbc.Driver
         #基本属性
-        url: jdbc:mysql://192.168.1.122:3306/auto_test?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+        url: jdbc:mysql://localhost:3306/auto_test?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
         username: root
         password: zea0i+6hx7Dp
         #配置初始化大小/最小/最大

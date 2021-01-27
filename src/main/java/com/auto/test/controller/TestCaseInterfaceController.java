@@ -54,9 +54,10 @@ public class TestCaseInterfaceController {
   }
   
   @PutMapping("editStep")
-  @ApiOperation(value = "编辑用例步骤")
-  public JsonResult<Boolean> editStep(@RequestBody TAutoStepInterface stepApiDto) {
-    return JsonResult.success(stepApiService.updateById(stepApiDto));
+  @ApiOperation(value = "编辑用例步骤 返回id")
+  public JsonResult<String> editStep(@RequestBody TAutoStepInterface stepApiDto) {
+    stepApiService.saveOrUpdate(stepApiDto);
+    return JsonResult.success(stepApiDto.getId());
   }
   
   /**

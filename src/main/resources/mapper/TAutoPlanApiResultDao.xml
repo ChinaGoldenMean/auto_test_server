@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auto.test.dao.TAutoPlanApiResultDao">
+
+    <resultMap type="com.auto.test.model.dto.TApiPlanResultDto" id="planResult">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="jobId" column="job_id"/>
+        <result property="status" column="status"/>
+        <result property="suiteTotalCount" column="suite_total_count"/>
+
+        <result property="suiteSuccCount" column="suite_succ_count"/>
+        <result property="suiteFailCount" column="suite_fail_count"/>
+        <result property="createTime" column="create_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="remark" column="remark"/>
+        <collection property="cases" column="id" ofType="com.auto.test.model.dto.TApiCaseResultDto" fetchType="eager" select="com.auto.test.dao.TApiTestCaseResultDao.listCaseResultByPlanId"/>
+
+    </resultMap>
+
+    <select id="selectOnePlanResult"  resultMap="planResult">
+       select * from t_auto_test_plan_api_result
+        <where>
+            <if test="id != null and id != ''">
+                id= #{id}
+            </if>
+
+        </where>
+    </select>
+
+
+</mapper> 
