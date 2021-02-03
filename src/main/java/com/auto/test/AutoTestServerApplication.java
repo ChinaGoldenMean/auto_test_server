@@ -15,6 +15,8 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.io.IOException;
+
 //@EnableAdminServer
 @SpringBootApplication
 @MapperScan("com.auto.test.dao")
@@ -24,7 +26,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class AutoTestServerApplication {
   
   public static void main(String[] args) {
+  
+    
     SpringApplication.run(AutoTestServerApplication.class, args);
+  
   }
   
   //为了解决tomcat报错问题

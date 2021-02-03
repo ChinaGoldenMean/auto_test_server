@@ -1,7 +1,5 @@
 package com.auto.test.controller;
 
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.fastjson.JSON;
 import com.auto.test.common.exception.ServiceException;
 import com.auto.test.dao.TAutoInterfaceDao;
 import com.auto.test.entity.TAutoInterface;
@@ -9,7 +7,6 @@ import com.auto.test.entity.TApiResult;
 import com.auto.test.model.bo.base.JsonResult;
 import com.auto.test.model.bo.base.Page;
 import com.auto.test.model.dto.InterfaceClassifyParam;
-import com.auto.test.model.excel.TAutoInterfaceExport;
 import com.auto.test.model.po.ApiParam;
 import com.auto.test.service.TAutoInterfaceService;
 import com.auto.test.service.request.RequestExecutorServer;
@@ -23,11 +20,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URLEncoder;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,7 +54,7 @@ public class InterfaceController {
   public JsonResult<TApiResult> debugTApi(@RequestBody TAutoInterface api) {
     Map<String, Object> caseVars = new ConcurrentHashMap<>();
     List<ApiParam> params = new ArrayList<>();
-    
+    caseVars.put("host","testHost");
     TApiResult tApiResult = requestExecutorServer.executeHttpRequest(api, null, caseVars, params);
     return JsonResult.success(tApiResult);
     
@@ -122,20 +118,23 @@ public class InterfaceController {
     
     return JsonResult.success(interfaceService.swaggerImport(apiUrl, moduleId));
   }
+  @PostMapping(value = "/mvcImport/{{moduleId}}")
+  @ApiOperation("批量导入接口(mvc)")
+  public JsonResult<Integer> mvcImport(@RequestParam("moduleId") String moduleId, String apiUrl) {
+    return JsonResult.success(interfaceService.springMVCCodeImport(apiUrl, moduleId));
+  }
+  @ApiOperation(value = "批量导入接口(postMan json文件)")
+  @PostMapping(value = "/postManImport/{{moduleId}}", consumes = "multipart/*", headers = "content-type=multipart/form-data")
+  public JsonResult<Integer> postManImport(@RequestParam("moduleId") String moduleId, @RequestParam("file") MultipartFile file) {
+    
+    
+    return JsonResult.success(interfaceService.postManImport(file,moduleId));
+  }
   @ApiOperation(value = "批量导入接口(excel文件)")
   @PostMapping(value = "/excelImport", consumes = "multipart/*", headers = "content-type=multipart/form-data")
   public JsonResult<Boolean> excelImport(@RequestParam("file") MultipartFile file) {
-  
-  
+   
     return JsonResult.success(interfaceService.excelImport(file));
   }
-  /**
-   *  时候返回json（默认失败了会返回一个有部分数据的Excel）
-   *
-   * @since 2.1.1
-   */
-  @GetMapping("download")
-  public void downloadFailedUsingJson(HttpServletResponse response)  {
-    interfaceService.download(response);
-  }
+ 
 }

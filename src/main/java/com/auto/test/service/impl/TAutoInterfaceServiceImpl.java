@@ -4,40 +4,50 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.auto.test.common.exception.ServiceException;
+import com.auto.test.config.ApplicationConfig;
+import com.auto.test.config.apiggs.CostomPostmanRender;
 import com.auto.test.config.excel.UploadInterfaceListener;
-import com.auto.test.dao.TAutoInterfaceClassifyDao;
 import com.auto.test.dao.TAutoInterfaceDao;
 import com.auto.test.entity.TAutoInterface;
 import com.auto.test.entity.TAutoInterfaceClassify;
 import com.auto.test.entity.TAutoModel;
+import com.auto.test.model.constant.FileType;
 import com.auto.test.model.excel.TAutoInterfaceExport;
 import com.auto.test.model.excel.TAutoInterfaceImport;
 import com.auto.test.model.po.BodyData;
 import com.auto.test.model.po.Query;
 import com.auto.test.model.po.WebHeader;
+import com.auto.test.model.postman.PostmanCollection;
+import com.auto.test.model.postman.PostmanFolder;
+import com.auto.test.model.postman.PostmanItem;
+import com.auto.test.model.postman.PostmanReader;
+import com.auto.test.model.vo.RepositoryVo;
 import com.auto.test.service.TAutoInterfaceClassifyService;
 import com.auto.test.service.TAutoInterfaceService;
 import com.auto.test.service.TAutoModelService;
+import com.auto.test.utils.repository.RepositoryUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.apigcc.core.Apigcc;
+import com.github.apigcc.core.Context;
+import com.github.apigcc.core.common.postman.Folder;
+import com.github.apigcc.core.common.postman.Postman;
 import io.swagger.models.*;
-import io.swagger.models.parameters.AbstractSerializableParameter;
-import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.QueryParameter;
 import io.swagger.parser.SwaggerParser;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +67,8 @@ public class TAutoInterfaceServiceImpl extends ServiceImpl<TAutoInterfaceDao, TA
   
   @Resource
   private TAutoModelService modelService;
-  
+  @Autowired
+  ApplicationConfig config;
   @Resource
   TAutoInterfaceDao interfaceDao;
   @Autowired
@@ -114,7 +125,7 @@ public class TAutoInterfaceServiceImpl extends ServiceImpl<TAutoInterfaceDao, TA
                     
                     autoInterface.setReqBodyJson(JSON.toJSONString(jsonParameter.get("schema")));
                   } else if ("formData".equals(in)) {
-                    autoInterface.setReqBodyType("form");
+                    autoInterface.setReqBodyType("formdata");
                     jsonParameter.remove("in");
                     bodyDataList.addAll(BodyData.json2BodyDataList(jsonParameter));
                     
@@ -163,7 +174,11 @@ public class TAutoInterfaceServiceImpl extends ServiceImpl<TAutoInterfaceDao, TA
   
   @Override
   public Boolean excelImport(MultipartFile file) {
-  
+    String fileName = file.getOriginalFilename();
+    String fileType = fileName.substring(fileName.lastIndexOf("."));
+    if(StringUtils.isEmpty(fileType)|| !fileType.equals(FileType.XLSX.value)){
+      throw new ServiceException( "文件类型异常，请上传 XLSX格式文件");
+    }
     try {
       EasyExcel.read(file.getInputStream(), TAutoInterfaceImport.class, new UploadInterfaceListener(interfaceService)).sheet().doRead();
       
@@ -218,6 +233,91 @@ public class TAutoInterfaceServiceImpl extends ServiceImpl<TAutoInterfaceDao, TA
       throw new ServiceException(interfaceImport.getClassifyName() + "：分组名称不存在，请先创建分组");
     }
     
+  }
+  
+  @Override
+  public Integer springMVCCodeImport(String url, String moduleId) {
+    RepositoryVo vo = new RepositoryVo().setCodeUrl(url).setModuleId(moduleId).setBasePath(config.getBasePath());
+    RepositoryUtils.checkout(vo);
+    String localPath = RepositoryUtils.getLocalPath(vo);
+   
+    Context context = new Context();
+    context.setId(moduleId);
+    context.setName(moduleId);
+    context.addSource(Paths.get(localPath));
+    Apigcc apigcc = new Apigcc(context);
+    apigcc.parse();
+    apigcc.render();
+    CostomPostmanRender costomPostmanTreeHandler = new CostomPostmanRender();
+  
+    Postman postman =costomPostmanTreeHandler.build(apigcc.getProject());
+   
+    List<Folder>  postmanItems = postman.getItem();
+    Integer count =0;
+    if(postmanItems!=null){
+     // postmanItems.stream().forEach(postmanItem -> {
+        for(Folder postmanItem: postmanItems){
+        TAutoInterfaceClassify interfaceClassify = new TAutoInterfaceClassify();
+        interfaceClassify.setName(postmanItem.getName());
+          interfaceClassify.setModuleId(moduleId);
+        classifyService.save(interfaceClassify);
+        List<Folder> items = postmanItem.getItem();
+        if(items!=null&&items.size()>0){
+          for(Folder postmanItemSubitem: items){
+        //  items.stream().forEach(postmanItemSubitem -> {
+            TAutoInterface autoInterface = new TAutoInterface(postmanItemSubitem);
+            autoInterface.setClassifyId(interfaceClassify.getId());
+          save(autoInterface);
+            count++;
+          }
+        }
+      }
+    }
+    return count;
+  }
+  
+  @SneakyThrows
+  @Override
+  public Integer postManImport(MultipartFile file, String moduleId) {
+    String fileName = file.getOriginalFilename();
+    String fileType = fileName.substring(fileName.lastIndexOf("."));
+    if(StringUtils.isEmpty(fileType)||!fileType.equals(FileType.JSON.value)){
+      throw new ServiceException( "文件类型异常，请上传json格式文件");
+    }
+    PostmanReader reader = new PostmanReader();
+    PostmanCollection postmanCollection = reader.readCollectionFile(file.getInputStream());
+    Integer count =0;
+   
+    List<PostmanFolder>  postmanItems = postmanCollection.getItem();
+    if(postmanItems!=null){
+      
+        for(PostmanFolder postmanItem: postmanItems){
+        TAutoInterfaceClassify interfaceClassify = new TAutoInterfaceClassify();
+        interfaceClassify.setName(postmanItem.getName());
+        interfaceClassify.setModuleId(moduleId);
+        classifyService.save(interfaceClassify);
+        List<PostmanItem> items = postmanItem.getItem();
+        if(items!=null&&items.size()>0){
+            for(PostmanItem postmanItemSubitem: items){
+            List<PostmanItem>  item = postmanItemSubitem.getItem();
+            if(item!=null&&item.size()>0){
+                for(PostmanItem itemSub: item){
+                  TAutoInterface autoInterface = new TAutoInterface(itemSub);
+                  autoInterface.setClassifyId(interfaceClassify.getId());
+                  save(autoInterface);
+                  count++;
+                }
+            }else{
+              TAutoInterface autoInterface = new TAutoInterface(postmanItemSubitem);
+              autoInterface.setClassifyId(interfaceClassify.getId());
+              save(autoInterface);
+              count++;
+            }
+          }
+        }
+      }
+    }
+    return count;
   }
   
   private List<WebHeader> getWebHeader(List<String> consumes) {

@@ -6,6 +6,7 @@ import io.restassured.config.EncoderConfig;
 import io.restassured.config.HttpClientConfig;
 import io.restassured.specification.RequestSpecification;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,7 +76,8 @@ public class ApiUtil {
     switch (assertion.getExpectRelation()) {
       // case "等于":
       case 0:
-        if (assertion.getExpectValue().equals(realValue)) {
+        String expectValue = assertion.getExpectValue();
+        if (!StringUtils.isEmpty(expectValue)&&expectValue.equals(realValue)) {
           return true;
         }
         break;

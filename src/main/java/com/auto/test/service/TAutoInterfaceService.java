@@ -22,4 +22,6 @@ public interface TAutoInterfaceService extends IService<TAutoInterface> {
   Boolean excelImport(MultipartFile file);
   void download(HttpServletResponse response);
   void checkInterfaceImport(TAutoInterfaceImport interfaceImport);
+  Integer springMVCCodeImport(String url, String moduleId);
+  Integer postManImport(MultipartFile file, String moduleId);
 }

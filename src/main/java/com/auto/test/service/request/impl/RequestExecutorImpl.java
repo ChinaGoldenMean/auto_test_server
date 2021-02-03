@@ -45,12 +45,12 @@ public class RequestExecutorImpl implements RequestExecutorServer {
     applyHeaders(requestSpecification, tApi, gVars, caseVars, tApiResult, params);
     applyQueryParameters(requestSpecification, tApi, gVars, caseVars, tApiResult, params);
     log.info("开始请求执行接口");
-    tApi.setDomain(MyStringUtils.replaceKeyFromMap(tApi.getDomain(), gVars, caseVars));
+    tApi.setDomain(MyStringUtils.replaceKeyFromMap(tApi.getDomain(), caseVars, gVars));
     tApiResult.setReqMethod(tApi.getMethod());
     if (!tApi.getMethod().equalsIgnoreCase("get")) {
       tApiResult.setReqBodyType(tApi.getReqBodyType());
       if (tApi.getReqBodyType() == null) {
-      } else if (tApi.getReqBodyType().equals("form")) {
+      } else if (tApi.getReqBodyType().equals("formdata")) {
         applyFormParam(requestSpecification, tApi, gVars, caseVars, tApiResult, params);
       } else if (tApi.getReqBodyType().equals("raw")) {
         applyRawParam(requestSpecification, tApi, gVars, caseVars, tApiResult, params);

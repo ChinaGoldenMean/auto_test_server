@@ -63,5 +63,7 @@ public class TAutoInterfaceClassify implements Serializable {
     }
     this.name = classifyName;
   }
+  public TAutoInterfaceClassify(){
   
+  }
 }

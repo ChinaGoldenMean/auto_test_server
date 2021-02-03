@@ -15,17 +15,21 @@ import com.auto.test.model.po.Assert;
 import com.auto.test.model.po.BodyData;
 import com.auto.test.model.po.Query;
 import com.auto.test.model.po.WebHeader;
+import com.auto.test.model.postman.*;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
+import com.github.apigcc.core.common.postman.*;
+import com.github.apigcc.core.schema.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.parameters.Parameter;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.io.Serializable;
 import java.util.List;
@@ -98,7 +102,7 @@ public class TAutoInterface implements Serializable {
   @TableField(typeHandler = HeaderListTypeHandler.class)
   @ExcelProperty(value = "请求头",converter = HeaderCustomConverter.class)
   @ApiModelProperty(value = "请求头", required = true)
-  private List<WebHeader> reqHeader;
+  private List<WebHeader> reqHeader =new ArrayList();;
   
   /**
    * 请求query
@@ -106,7 +110,7 @@ public class TAutoInterface implements Serializable {
   @TableField(typeHandler = QueryListTypeHandler.class)
   @ExcelProperty(value = "请求query")
   @ApiModelProperty(value = "请求query", required = true)
-  private List<Query> reqQuery;
+  private List<Query> reqQuery=new ArrayList();
   
   /**
    * 请求body from-data格式
@@ -114,7 +118,7 @@ public class TAutoInterface implements Serializable {
   @TableField(typeHandler = BodyDataListTypeHandler.class)
   @ExcelProperty(value = "请求body from-data格式")
   @ApiModelProperty(value = "请求body from-data格式", required = true)
-  private List<BodyData> reqBodyData;
+  private List<BodyData> reqBodyData=new ArrayList();
   
   /**
    * 请求body json格式
@@ -128,14 +132,14 @@ public class TAutoInterface implements Serializable {
    */
   @ApiModelProperty(value = "请求body的类型", required = true)
   @ExcelProperty("请求body的类型")
-  private String reqBodyType;
+  private String reqBodyType ;
   /**
    * 请求断言
    */
   @ApiModelProperty(value = "请求断言")
   @TableField(typeHandler = AssertListTypeHandler.class)
   @ExcelProperty(value = "请求断言")
-  private List<Assert> reqAssert;
+  private List<Assert> reqAssert=new ArrayList();
   
   /**
    * 调试响应对象
@@ -203,4 +207,175 @@ public class TAutoInterface implements Serializable {
  public TAutoInterface(){
  
  }
+  
+  public TAutoInterface(PostmanItem postmanItem){
+    
+    this.name =postmanItem.getName();
+    //  Item item = (Item)folder;
+    
+    PostmanRequest request =postmanItem.getRequest();
+    if(request!=null){
+      
+      this.method =request.getMethod();
+      PostmanUrl url =  request.getUrl();
+       this.path =url.getPathStr();
+       this.domain =url.getHost()[0];
+      //GET请求
+      if(Method.GET.name().equals(this.method)){
+        String raw = url.getRaw();
+            this.reqQuery=Query.rawToListQuery(raw);
+      }
+      List<PostmanHeader> headers = request.getHeader();
+      if(headers!=null&&headers.size()>0){
+        headers.stream().forEach(header -> {
+          WebHeader webHeader = new WebHeader(header);
+          this.reqHeader.add(webHeader);
+        });
+      }
+      PostmanBody body = request.getBody();
+      if(body!=null){
+        
+
+        if(BodyMode.raw.name()==body.getMode()){
+          String raw =body.getRaw();
+          this.reqBodyJson = raw;
+          this.reqBodyType =BodyMode.raw.name();
+        }else  if(BodyMode.formdata.name()==body.getMode()){
+          this.reqBodyType =BodyMode.formdata.name();
+          List<PostmanFormData> formdata =body.getFormdata();
+          if(formdata!=null&&formdata.size()>0){
+            formdata.stream().forEach(header -> {
+              BodyData bodyData = new BodyData(header);
+              this.reqBodyData.add(bodyData);
+            });
+          }
+          //暂时不支持urlencoded
+          List<PostmanUrlEncoded> urlencoded =body.getUrlencoded();
+          if(urlencoded!=null&&urlencoded.size()>0){
+            urlencoded.stream().forEach(header -> {
+              BodyData bodyData = new BodyData(header);
+              this.reqBodyData.add(bodyData);
+            });
+          }
+        }
+      }
+    }
+  }
+  
+//  public TAutoInterface(PostmanItem postmanItem){
+//
+//    this.name =postmanItem.getName();
+//  //  Item item = (Item)folder;
+//
+//    PostmanRequest request =postmanItem.getRequest();
+//    if(request!=null){
+//
+//      this.method =request.getMethod();
+//      PostmanUrl url =  request.getUrl();
+//     // this.path =url.getPath();
+//    //  this.domain =url.getHost();
+//      //GET请求
+//      if(Method.GET.equals(this.method)){
+//        List<PostmanQuery> parameters = url.getQueries();
+//        if(parameters!=null&&parameters.size()>0){
+//          parameters.stream().forEach(parameter -> {
+//            Query query = new Query(parameter);
+//            this.reqQuery.add(query);
+//          });
+//        }
+//      }
+//      List<PostmanHeader> headers = request.getHeaders();
+//      if(headers!=null&&headers.size()>0){
+//        headers.stream().forEach(header -> {
+//          WebHeader webHeader = new WebHeader(header);
+//          this.reqHeader.add(webHeader);
+//        });
+//      }
+//      PostmanBody body = request.getBody();
+//      if(body!=null){
+//
+//
+//        if(BodyMode.raw.name()==body.getMode()){
+//          PostmanRawBody raw =body.getRaw();
+//          this.reqBodyJson = raw.getValue();
+//          this.reqBodyType =BodyMode.raw.name();
+//        }else  if(BodyMode.formdata.name()==body.getMode()){
+//          this.reqBodyType =BodyMode.formdata.name();
+//          List<PostmanFormDataBody> formdata =body.getFormDataList();
+//          if(formdata!=null&&formdata.size()>0){
+//            formdata.stream().forEach(header -> {
+//              BodyData bodyData = new BodyData(header);
+//              this.reqBodyData.add(bodyData);
+//            });
+//          }
+//          //暂时不支持urlencoded
+//          List<PostmanUrlEncodedBody> urlencoded =body.getUrlEncodes();
+//          if(urlencoded!=null&&urlencoded.size()>0){
+//            urlencoded.stream().forEach(header -> {
+//              BodyData bodyData = new BodyData(header);
+//              this.reqBodyData.add(bodyData);
+//            });
+//          }
+//        }
+//      }
+//    }
+//  }
+  
+  public TAutoInterface(Folder folder){
+    this.name =folder.getName();
+    Item item = (Item)folder;
+    
+    Request request =item.getRequest();
+    if(request!=null){
+
+      this.method =request.getMethod().name();
+       Url url =  request.getUrl();
+      this.path =url.getPath();
+      this.domain =url.getHost();
+      //GET请求
+      if(Method.GET.equals(this.method)){
+        List<Parameter> parameters = url.getQuery();
+        if(parameters!=null&&parameters.size()>0){
+          parameters.stream().forEach(parameter -> {
+            Query query = new Query(parameter);
+            this.reqQuery.add(query);
+          });
+        }
+      }
+      List<Header> headers = request.getHeaders();
+      if(headers!=null&&headers.size()>0){
+        headers.stream().forEach(header -> {
+          WebHeader webHeader = new WebHeader(header);
+          this.reqHeader.add(webHeader);
+        });
+      }
+      Body body = request.getBody();
+      if(body!=null){
+        
+        
+        if(BodyMode.raw==body.getMode()){
+          String raw =body.getRaw();
+          this.reqBodyJson = raw;
+          this.reqBodyType =BodyMode.raw.name();
+        }else  if(BodyMode.formdata==body.getMode()){
+          this.reqBodyType =BodyMode.formdata.name();
+          List<Parameter> formdata =body.getFormdata();
+          if(formdata!=null&&formdata.size()>0){
+            formdata.stream().forEach(header -> {
+              BodyData bodyData = new BodyData(header);
+              this.reqBodyData.add(bodyData);
+            });
+          }
+          //暂时不支持urlencoded
+          List<Parameter> urlencoded =body.getUrlencoded();
+          if(urlencoded!=null&&urlencoded.size()>0){
+            urlencoded.stream().forEach(header -> {
+              BodyData bodyData = new BodyData(header);
+              this.reqBodyData.add(bodyData);
+            });
+          }
+        }
+      }
+    }
+  }
 }

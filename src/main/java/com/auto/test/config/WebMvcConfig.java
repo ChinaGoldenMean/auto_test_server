@@ -32,14 +32,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
    */
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    // registry.addResourceHandler("/profile/**")
-    //  .addResourceLocations(ResourceUtils.FILE_URL_PREFIX + RabbitConfig.profile);
+     registry.addResourceHandler("/template/**")
+      .addResourceLocations("classpath:/file_template/");
     // 解决swagger无法访问
     
     registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-    
     // 解决swagger的js文件无法访问
-    
     registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
   }
   
